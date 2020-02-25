@@ -10,8 +10,11 @@ mod models;
 use models::{Match};
 use models::{House};
 
+mod match;
+
 #[get("/matches")]
 fn read() -> JsonValue {
+    matches();
     let mock1: Vec<House> = vec!(
         House{
             name: "Lannister",
