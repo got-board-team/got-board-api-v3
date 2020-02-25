@@ -2,7 +2,7 @@
 
 #[macro_use] extern crate rocket;
 #[macro_use] extern crate rocket_contrib;
-#[macro_use] extern crate serde_derive;
+extern crate diesel;
 
 use rocket_contrib::json::JsonValue;
 
@@ -10,25 +10,25 @@ mod models;
 use models::{Match};
 use models::{House};
 
-mod match;
+mod match_model;
 
 #[get("/matches")]
 fn read() -> JsonValue {
-    matches();
+    match_model::show_all_matches();
     let mock1: Vec<House> = vec!(
         House{
-            name: "Lannister",
+            name: String::from("Lannister"),
             player_id: 1
         },
         House{
-            name: "Baratheon",
+            name: String::from("Baratheon"),
             player_id: 2
         },
     );
 
     let mock2: Vec<House> = vec!(
         House{
-            name: "Lannister",
+            name: String::from("Lannister"),
             player_id: 1
         }
     );
@@ -36,13 +36,13 @@ fn read() -> JsonValue {
     json!([
         Match{
             id: 1,
-            name: "My first match",
+            name: String::from("My first match"),
             players_count: 3,
             houses: mock1
         },
         Match{
             id: 2,
-            name: "My second match",
+            name: String::from("My second match"),
             players_count: 4,
             houses: mock2
         },

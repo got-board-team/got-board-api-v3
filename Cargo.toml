@@ -1,5 +1,5 @@
 [package]
-name = "got-board-api-v3"
+name = "got_board_api_v3"
 version = "0.1.0"
 authors = ["Rafael Borgonovi Tauil <rafael@tauil.com.br>"]
 edition = "2018"
@@ -8,7 +8,6 @@ edition = "2018"
 rocket = "0.4.2"
 rocket_codegen = "0.4.2"
 serde = { version = "1.0.104", features = ["derive"] }
-serde_derive = "1.0.104"
 diesel = { version = "1.0.0", features = ["postgres"] }
 dotenv = "0.9.0"
 
