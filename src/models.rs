@@ -1,13 +1,13 @@
 #[derive(Serialize, Deserialize)]
 pub struct House {
-    pub name: String,
-    pub playerId: Option<i32>,
+    pub name: &'static str,
+    pub player_id: i32,
 }
 
 #[derive(Serialize, Deserialize)]
 pub struct Match {
-    pub id: Option<i32>,
-    pub name: String,
-    pub playersCount: String,
-    pub houses: [House],
+    pub id: i32,
+    pub name: &'static str,
+    pub players_count: i32,
+    pub houses: Vec<House>,
 }
