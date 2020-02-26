@@ -20,10 +20,8 @@ pub fn establish_connection() -> PgConnection {
         .expect(&format!("Error connecting to {}", database_url))
 }
 
-pub fn show_all_matches() {
+pub fn show_all_matches() -> Vec<Match> {
     use schema::matches::dsl::*;
-
-    println!("-- WANDERSOOOONN ---");
 
     let connection = establish_connection();
     let results = matches
@@ -32,9 +30,5 @@ pub fn show_all_matches() {
         .expect("Error loading matches");
 
     println!("Displaying {} matches", results.len());
-    for m in results {
-        println!("{}", m.name);
-        println!("{}", m.players_count);
-        println!("----------\n");
-    }
+    results
 }

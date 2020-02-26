@@ -11,20 +11,7 @@ use got_board_api_v3::*;
 
 #[get("/matches")]
 fn read() -> JsonValue {
-    show_all_matches();
-
-    json!([
-        Match{
-            id: 1,
-            name: String::from("My first match"),
-            players_count: 3,
-        },
-        Match{
-            id: 2,
-            name: String::from("My second match"),
-            players_count: 4,
-        },
-    ])
+    json!(show_all_matches())
 }
 
 fn main() {
