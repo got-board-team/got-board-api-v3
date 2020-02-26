@@ -1,5 +1,4 @@
 use serde::{Serialize, Deserialize};
-use crate::schema::matches;
 
 #[derive(Queryable, Serialize, Deserialize)]
 pub struct Match {

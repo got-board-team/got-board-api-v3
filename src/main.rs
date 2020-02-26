@@ -6,7 +6,6 @@ extern crate diesel;
 
 use rocket_contrib::json::JsonValue;
 
-use self::models::*;
 use got_board_api_v3::*;
 
 #[get("/matches")]
