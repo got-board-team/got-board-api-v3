@@ -2,8 +2,12 @@
 extern crate diesel;
 extern crate dotenv;
 
+pub mod models;
+pub mod schema;
+
 use diesel::prelude::*;
-use diesel::pg::PgConnection;
+use models::*;
+// use diesel::pg::PgConnection;
 use dotenv::dotenv;
 use std::env;
 
@@ -16,5 +20,21 @@ pub fn establish_connection() -> PgConnection {
         .expect(&format!("Error connecting to {}", database_url))
 }
 
-pub mod schema;
-pub mod models;
+pub fn show_all_matches() {
+    use schema::matches::dsl::*;
+
+    println!("-- WANDERSOOOONN ---");
+
+    let connection = establish_connection();
+    let results = matches
+        .limit(5)
+        .load::<Match>(&connection)
+        .expect("Error loading matches");
+
+    println!("Displaying {} matches", results.len());
+    for m in results {
+        println!("{}", m.name);
+        println!("{}", m.players_count);
+        println!("----------\n");
+    }
+}
