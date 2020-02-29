@@ -20,13 +20,14 @@ pub fn establish_connection() -> PgConnection {
         .expect(&format!("Error connecting to {}", database_url))
 }
 
-pub fn show_all_matches() -> Vec<Match> {
-    use schema::matches::dsl::*;
+pub fn show_all_matches() -> Vec<(Match, House)> {
+    use schema::*;
 
     let connection = establish_connection();
-    let results = matches
-        .limit(5)
-        .load::<Match>(&connection)
+
+    let results: Vec<(Match, House)> = matches::table
+        .inner_join(houses::table.on(houses::match_id.eq(matches::id)))
+        .load(&connection)
         .expect("Error loading matches");
 
     println!("Displaying {} matches", results.len());
