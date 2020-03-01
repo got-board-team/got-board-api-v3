@@ -25,12 +25,13 @@ pub fn show_all_matches() -> Vec<(Match, Vec<User>)> {
 
     let connection = establish_connection();
 
-    let matches = matches::table.load::<Match>(&connection).expect("error loading matches");
+    let matches_vec = matches::table.load::<Match>(&connection).expect("error loading matches");
 
-    let u = User::belonging_to(&matches)
+    let users_vec = User::belonging_to(&matches_vec)
         .load::<User>(&connection).expect("error loading users")
-        .grouped_by(&matches);
-    let data = matches.into_iter().zip(u).collect::<Vec<_>>();
+        .grouped_by(&matches_vec);
+    let my_query = matches_vec.into_iter().zip(users_vec);
+    let data = my_query.collect::<Vec<_>>();
 
     println!("Displaying {} matches", data.len());
     data
