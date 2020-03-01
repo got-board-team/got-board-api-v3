@@ -1,12 +1,4 @@
 table! {
-    houses (id) {
-        id -> Int4,
-        name -> Varchar,
-        match_id -> Int4,
-    }
-}
-
-table! {
     matches (id) {
         id -> Int4,
         name -> Varchar,
@@ -23,8 +15,16 @@ table! {
     }
 }
 
+table! {
+    users (id) {
+        id -> Int4,
+        name -> Varchar,
+        match_id -> Int4,
+    }
+}
+
 allow_tables_to_appear_in_same_query!(
-    houses,
     matches,
     posts,
+    users,
 );

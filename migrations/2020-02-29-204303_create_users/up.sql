@@ -1,4 +1,4 @@
-CREATE TABLE houses (
+CREATE TABLE users (
   id SERIAL PRIMARY KEY,
   name VARCHAR NOT NULL,
   match_id SERIAL

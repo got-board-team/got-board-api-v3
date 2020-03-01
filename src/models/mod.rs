@@ -1,10 +1,10 @@
 use serde::{Serialize, Deserialize};
-use crate::schema::{matches, houses};
+use crate::schema::{matches, users};
 
 #[derive(Queryable, Associations, Serialize, Deserialize)]
 #[belongs_to(Match)]
-#[table_name = "houses"]
-pub struct House {
+#[table_name = "users"]
+pub struct User {
     pub id: i32,
     pub name: String,
     pub match_id: i32,
