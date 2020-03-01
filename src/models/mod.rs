@@ -17,3 +17,11 @@ pub struct Match {
     pub name: String,
     pub players_count: i32,
 }
+
+#[derive(Serialize, Deserialize)]
+pub struct MatchWithUsers {
+    pub id: i32,
+    pub name: String,
+    pub players_count: i32,
+    pub users: Vec<User>,
+}

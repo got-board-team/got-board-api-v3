@@ -36,3 +36,28 @@ pub fn show_all_matches() -> Vec<(Match, Vec<User>)> {
     println!("Displaying {} matches", data.len());
     data
 }
+
+pub fn show_all_matches2() -> Vec<MatchWithUsers> {
+    use schema::*;
+
+    let connection = establish_connection();
+
+    let query_result: Vec<(Match, Option<User>)> = matches::table
+        .left_join(users::table.on(users::match_id.eq(matches::id)))
+        .load(&connection)
+        .expect("Error loading matches");
+
+    let result = &query_result.into_iter().map(|qr| MatchWithUsers{
+        id: qr.0.id,
+        name: qr.0.name,
+        players_count: qr.0.players_count,
+        users: vec!(
+            User{
+                id: qr.1.id,
+                name: qr.1.name,
+                match_id: qr.1.match_id,
+            }),
+    }).collect();
+
+    &result;
+}
