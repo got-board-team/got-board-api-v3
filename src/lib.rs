@@ -21,12 +21,11 @@ pub fn establish_connection() -> PgConnection {
 }
 
 pub fn show_all_matches() -> Vec<(Match, Vec<User>)> {
-    use schema::matches as schema_match;
-    use schema::matches::dsl::matches as all_matches;
+    use schema::matches;
 
     let connection = establish_connection();
 
-    let m = schema_match::table.load::<Match>(&connection).expect("CU");
+    let m = matches::table.load::<Match>(&connection).expect("CU");
 
     let u = User::belonging_to(&m)
         .load::<User>(&connection).expect("CU 2")
