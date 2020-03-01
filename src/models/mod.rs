@@ -1,7 +1,7 @@
 use serde::{Serialize, Deserialize};
 use crate::schema::{matches, users};
 
-#[derive(Queryable, Associations, Serialize, Deserialize)]
+#[derive(Queryable, Identifiable, Associations, Serialize, Deserialize)]
 #[belongs_to(Match)]
 #[table_name = "users"]
 pub struct User {
