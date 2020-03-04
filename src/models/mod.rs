@@ -1,5 +1,5 @@
-use serde::{Serialize, Deserialize};
 use crate::schema::{matches, users};
+use serde::{Deserialize, Serialize};
 
 #[derive(Queryable, Identifiable, Associations, Serialize, Deserialize)]
 #[belongs_to(Match)]

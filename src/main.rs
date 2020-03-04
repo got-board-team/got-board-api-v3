@@ -1,11 +1,13 @@
 #![feature(proc_macro_hygiene, decl_macro)]
 
-#[macro_use] extern crate rocket;
-#[macro_use] extern crate rocket_contrib;
+#[macro_use]
+extern crate rocket;
+#[macro_use]
+extern crate rocket_contrib;
 extern crate diesel;
 
-use rocket_contrib::json::JsonValue;
 use got_board_api_v3::*;
+use rocket_contrib::json::JsonValue;
 
 #[get("/matches")]
 fn read() -> JsonValue {
@@ -18,7 +20,5 @@ fn read2() -> JsonValue {
 }
 
 fn main() {
-    rocket::ignite()
-        .mount("/", routes![read, read2])
-        .launch();
+    rocket::ignite().mount("/", routes![read, read2]).launch();
 }
