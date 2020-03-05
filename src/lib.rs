@@ -48,38 +48,28 @@ pub fn show_all_matches2() -> Vec<MatchWithUsers> {
         .load(&connection)
         .expect("Error loading matches");
 
-    println!("Quert result: {}", &query_result.len());
-
     let mut response = Vec::new();
 
     for qr in &query_result {
-        let matches = &response;
-        let currentMatch = matches.into_iter().find(|mm| &mm.id == &qr.0.id);
+        let mut current_match = MatchWithUsers {
+            id: qr.0.id,
+            name: qr.0.name.clone(),
+            players_count: qr.0.players_count,
+            users: vec![],
+        };
 
-        match currentMatch {
-            Some(m) => {
-                let u = match qr.1 {
-                    Some(user) => m.users.push(User {
-                        id: user.id,
-                        name: user.name.clone(),
-                        match_id: user.match_id,
-                    }),
-                    None => println!("No user."),
-                };
+        match &qr.1 {
+            Some(match_user) => {
+                current_match.users.push(User {
+                    id: match_user.id,
+                    name: match_user.name.clone(),
+                    match_id: match_user.match_id,
+                });
             }
-            None => {
-                println!("No match.");
-                response.push(MatchWithUsers {
-                    id: qr.0.id,
-                    name: qr.0.name.clone(),
-                    players_count: qr.0.players_count,
-                    users: match qr.1 {
-                        Some(user) => vec![user],
-                        None => Vec::new(),
-                    },
-                })
-            }
+            None => println!("No user for this match."),
         }
+
+        response.push(current_match);
     }
 
     response
