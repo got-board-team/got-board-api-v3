@@ -51,12 +51,24 @@ pub fn show_all_matches2() -> Vec<MatchWithUsers> {
     let mut response = Vec::new();
 
     for qr in &query_result {
-        let mut current_match = MatchWithUsers {
-            id: qr.0.id,
-            name: qr.0.name.clone(),
-            players_count: qr.0.players_count,
-            users: vec![],
-        };
+        let mut current_match: MatchWithUsers;
+
+        match &response
+            .into_iter()
+            .find(|&m: MatchWithUsers| m.id == qr.0.id)
+        {
+            Some(existing_match) => {
+                println!("Match here: {}", existing_match.name);
+            }
+            None => {
+                current_match = MatchWithUsers {
+                    id: qr.0.id,
+                    name: qr.0.name.clone(),
+                    players_count: qr.0.players_count,
+                    users: vec![],
+                };
+            }
+        }
 
         match &qr.1 {
             Some(match_user) => {
