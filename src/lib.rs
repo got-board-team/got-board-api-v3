@@ -38,26 +38,45 @@ pub fn show_all_matches() -> Vec<(Match, Vec<User>)> {
     data
 }
 
-pub fn show_all_matches2() -> Option<(Match, Option<User>)> {
-    // use schema::*;
+pub fn show_all_matches2() -> Vec<MatchWithUsers> {
+    use schema::*;
 
-    // let connection = establish_connection();
+    let connection = establish_connection();
 
-    // let query_result: Vec<(Match, Option<User>)> = matches::table
-    //     .left_join(users::table.on(users::match_id.eq(matches::id)))
-    //     .load(&connection)
-    //     .expect("Error loading matches");
+    let query_result: Vec<(Match, Option<User>)> = matches::table
+        .left_join(users::table.on(users::match_id.eq(matches::id)))
+        .load(&connection)
+        .expect("Error loading matches");
 
-    let mut response: Vec<(Match, Option<User>)> = Vec::new();
-    &response.push((
-        Match {
-            id: 1,
-            name: String::from("My first match"),
-            players_count: 3,
-        },
-        None,
-    ));
-    response.into_iter().find(|m| m.0.id == 1)
+    let mut response: Vec<MatchWithUsers> = Vec::new();
+
+    for qr in &query_result {
+        let mut current_match: Option<MatchWithUsers> =
+            response.into_iter().find(|m| m.id == qr.0.id);
+
+        match current_match {
+            Some(existing_match) => {
+                println!("Inser user into match: {}", existing_match.name);
+            }
+            None => {
+                println!("No existing match. Add to response.");
+                let mut user = qr.1.unwrap();
+                response.push(MatchWithUsers {
+                    id: qr.0.id,
+                    name: qr.0.name.clone(),
+                    players_count: qr.0.players_count,
+                    users: vec![User {
+                        id: user.id,
+                        name: user.name,
+                        match_id: user.match_id,
+                    }],
+                });
+            }
+        }
+    }
+
+    response
+
     // match mat {
     //     Some(match_found) => {
     //         println!("Found!");
@@ -79,27 +98,6 @@ pub fn show_all_matches2() -> Option<(Match, Option<User>)> {
     //     }
     // }
 
-    // for qr in &query_result {
-    //     // let current_match = &response
-    //     //     .into_iter()
-    //     //     .find(|m: MatchWithUsers| m.id == qr.0.id);
-    //     let mut current_match;
-
-    //     match current_match {
-    //         Some(existing_match) => {
-    //             println!("Match here: {}", existing_match.name);
-    //         }
-    //         None => {
-    //             println!("No match.")
-    //             // m = MatchWithUsers {
-    //             //     id: qr.0.id,
-    //             //     name: qr.0.name.clone(),
-    //             //     players_count: qr.0.players_count,
-    //             //     users: vec![],
-    //             // };
-    //         }
-    //     }
-
     //     // match &qr.1 {
     //     //     Some(match_user) => {
     //     //         current_match.users.push(User {
@@ -113,6 +111,4 @@ pub fn show_all_matches2() -> Option<(Match, Option<User>)> {
 
     //     // response.push(m);
     // }
-
-    // // response
 }
