@@ -38,51 +38,81 @@ pub fn show_all_matches() -> Vec<(Match, Vec<User>)> {
     data
 }
 
-pub fn show_all_matches2() -> Vec<MatchWithUsers> {
-    use schema::*;
+pub fn show_all_matches2() -> Option<(Match, Option<User>)> {
+    // use schema::*;
 
-    let connection = establish_connection();
+    // let connection = establish_connection();
 
-    let query_result: Vec<(Match, Option<User>)> = matches::table
-        .left_join(users::table.on(users::match_id.eq(matches::id)))
-        .load(&connection)
-        .expect("Error loading matches");
+    // let query_result: Vec<(Match, Option<User>)> = matches::table
+    //     .left_join(users::table.on(users::match_id.eq(matches::id)))
+    //     .load(&connection)
+    //     .expect("Error loading matches");
 
-    let mut response = Vec::new();
+    let mut response: Vec<(Match, Option<User>)> = Vec::new();
+    &response.push((
+        Match {
+            id: 1,
+            name: String::from("My first match"),
+            players_count: 3,
+        },
+        None,
+    ));
+    response.into_iter().find(|m| m.0.id == 1)
+    // match mat {
+    //     Some(match_found) => {
+    //         println!("Found!");
+    //     }
+    //     None => {
+    //         println!("None.");
+    //         &response.push((
+    //             Match {
+    //                 id: 1,
+    //                 name: String::from("My first match"),
+    //                 players_count: 3,
+    //             },
+    //             Some(User {
+    //                 id: 1,
+    //                 name: String::from("Rafael"),
+    //                 match_id: 1,
+    //             }),
+    //         ));
+    //     }
+    // }
 
-    for qr in &query_result {
-        let mut current_match: MatchWithUsers;
+    // for qr in &query_result {
+    //     // let current_match = &response
+    //     //     .into_iter()
+    //     //     .find(|m: MatchWithUsers| m.id == qr.0.id);
+    //     let mut current_match;
 
-        match &response
-            .into_iter()
-            .find(|&m: MatchWithUsers| m.id == qr.0.id)
-        {
-            Some(existing_match) => {
-                println!("Match here: {}", existing_match.name);
-            }
-            None => {
-                current_match = MatchWithUsers {
-                    id: qr.0.id,
-                    name: qr.0.name.clone(),
-                    players_count: qr.0.players_count,
-                    users: vec![],
-                };
-            }
-        }
+    //     match current_match {
+    //         Some(existing_match) => {
+    //             println!("Match here: {}", existing_match.name);
+    //         }
+    //         None => {
+    //             println!("No match.")
+    //             // m = MatchWithUsers {
+    //             //     id: qr.0.id,
+    //             //     name: qr.0.name.clone(),
+    //             //     players_count: qr.0.players_count,
+    //             //     users: vec![],
+    //             // };
+    //         }
+    //     }
 
-        match &qr.1 {
-            Some(match_user) => {
-                current_match.users.push(User {
-                    id: match_user.id,
-                    name: match_user.name.clone(),
-                    match_id: match_user.match_id,
-                });
-            }
-            None => println!("No user for this match."),
-        }
+    //     // match &qr.1 {
+    //     //     Some(match_user) => {
+    //     //         current_match.users.push(User {
+    //     //             id: match_user.id,
+    //     //             name: match_user.name.clone(),
+    //     //             match_id: match_user.match_id,
+    //     //         });
+    //     //     }
+    //     //     None => println!("No user for this match."),
+    //     // }
 
-        response.push(current_match);
-    }
+    //     // response.push(m);
+    // }
 
-    response
+    // // response
 }
