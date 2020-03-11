@@ -50,21 +50,24 @@ pub fn show_all_matches2() -> Vec<MatchWithUsers> {
 
     let mut response: Vec<MatchWithUsers> = Vec::new();
 
-    for qr in &query_result {
-        let mut current_match: Option<MatchWithUsers> =
-            response.into_iter().find(|m| m.id == qr.0.id);
+    for (m, u) in &query_result {
+        let position_match = response
+            .into_iter()
+            .position(|match_with_user| match_with_user.id == m.id);
 
-        match current_match {
-            Some(existing_match) => {
+        match position_match {
+            Some(position) => {
+                let existing_match = response.get(position).unwrap();
                 println!("Inser user into match: {}", existing_match.name);
+                &existing_match.users.push(u.unwrap());
             }
             None => {
                 println!("No existing match. Add to response.");
-                let mut user = qr.1.unwrap();
+                let user = u.unwrap();
                 response.push(MatchWithUsers {
-                    id: qr.0.id,
-                    name: qr.0.name.clone(),
-                    players_count: qr.0.players_count,
+                    id: m.id,
+                    name: m.name.clone(),
+                    players_count: m.players_count,
                     users: vec![User {
                         id: user.id,
                         name: user.name,
