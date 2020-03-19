@@ -51,26 +51,25 @@ pub fn show_all_matches2() -> Vec<MatchWithUsers> {
     let mut response: Vec<MatchWithUsers> = Vec::new();
 
     for (m, u) in &query_result {
-        let position_match = response
+        let existing_match = &response
             .into_iter()
-            .position(|match_with_user| match_with_user.id == m.id);
+            .find(|match_with_user| match_with_user.id == m.id);
 
-        match position_match {
-            Some(position) => {
-                let existing_match = response.get(position).unwrap();
-                println!("Inser user into match: {}", existing_match.name);
-                &existing_match.users.push(u.unwrap());
+        match existing_match {
+            Some(mut found_match) => {
+                println!("Inser user into match: {}", found_match.name);
+                found_match.users.push(u.unwrap());
             }
             None => {
                 println!("No existing match. Add to response.");
-                let user = u.unwrap();
+                let user = u.as_ref().unwrap();
                 response.push(MatchWithUsers {
                     id: m.id,
                     name: m.name.clone(),
                     players_count: m.players_count,
                     users: vec![User {
                         id: user.id,
-                        name: user.name,
+                        name: user.name.clone(),
                         match_id: user.match_id,
                     }],
                 });
@@ -79,39 +78,4 @@ pub fn show_all_matches2() -> Vec<MatchWithUsers> {
     }
 
     response
-
-    // match mat {
-    //     Some(match_found) => {
-    //         println!("Found!");
-    //     }
-    //     None => {
-    //         println!("None.");
-    //         &response.push((
-    //             Match {
-    //                 id: 1,
-    //                 name: String::from("My first match"),
-    //                 players_count: 3,
-    //             },
-    //             Some(User {
-    //                 id: 1,
-    //                 name: String::from("Rafael"),
-    //                 match_id: 1,
-    //             }),
-    //         ));
-    //     }
-    // }
-
-    //     // match &qr.1 {
-    //     //     Some(match_user) => {
-    //     //         current_match.users.push(User {
-    //     //             id: match_user.id,
-    //     //             name: match_user.name.clone(),
-    //     //             match_id: match_user.match_id,
-    //     //         });
-    //     //     }
-    //     //     None => println!("No user for this match."),
-    //     // }
-
-    //     // response.push(m);
-    // }
 }
