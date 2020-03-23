@@ -53,15 +53,19 @@ pub fn show_all_matches2() -> HashMap<i32, MatchWithUsers> {
 
     for (m, u) in &query_result {
         let mut users: HashMap<i32, User> = HashMap::new();
-        let user = u.as_ref().unwrap();
-        users.insert(
-            user.id,
-            User {
-                id: user.id,
-                name: user.name.clone(),
-                match_id: user.match_id,
-            },
-        );
+        match u {
+            Some(existing_user_in_match) => {
+                users.insert(
+                    existing_user_in_match.id,
+                    User {
+                        id: existing_user_in_match.id,
+                        name: existing_user_in_match.name.clone(),
+                        match_id: existing_user_in_match.match_id,
+                    },
+                );
+            }
+            None => println!("No user found for this match: {}", m.name),
+        }
         let existing_match = response.entry(m.id).or_insert(MatchWithUsers {
             id: m.id,
             name: m.name.clone(),
