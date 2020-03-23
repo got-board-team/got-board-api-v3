@@ -7,6 +7,7 @@ pub mod schema;
 
 use diesel::prelude::*;
 use models::*;
+use std::collections::HashMap;
 // use diesel::pg::PgConnection;
 use dotenv::dotenv;
 use std::env;
@@ -38,7 +39,7 @@ pub fn show_all_matches() -> Vec<(Match, Vec<User>)> {
     data
 }
 
-pub fn show_all_matches2() -> Vec<MatchWithUsers> {
+pub fn show_all_matches2() -> HashMap<i32, MatchWithUsers> {
     use schema::*;
 
     let connection = establish_connection();
@@ -48,33 +49,27 @@ pub fn show_all_matches2() -> Vec<MatchWithUsers> {
         .load(&connection)
         .expect("Error loading matches");
 
-    let mut response: Vec<MatchWithUsers> = Vec::new();
+    let mut response: HashMap<i32, MatchWithUsers> = HashMap::new();
 
     for (m, u) in &query_result {
-        let existing_match = &response
-            .into_iter()
-            .find(|match_with_user| match_with_user.id == m.id);
+        let mut users: HashMap<i32, User> = HashMap::new();
+        let user = u.as_ref().unwrap();
+        users.insert(
+            user.id,
+            User {
+                id: user.id,
+                name: user.name.clone(),
+                match_id: user.match_id,
+            },
+        );
+        let existing_match = response.entry(m.id).or_insert(MatchWithUsers {
+            id: m.id,
+            name: m.name.clone(),
+            players_count: m.players_count,
+            users: users,
+        });
 
-        match existing_match {
-            Some(mut found_match) => {
-                println!("Inser user into match: {}", found_match.name);
-                found_match.users.push(u.unwrap());
-            }
-            None => {
-                println!("No existing match. Add to response.");
-                let user = u.as_ref().unwrap();
-                response.push(MatchWithUsers {
-                    id: m.id,
-                    name: m.name.clone(),
-                    players_count: m.players_count,
-                    users: vec![User {
-                        id: user.id,
-                        name: user.name.clone(),
-                        match_id: user.match_id,
-                    }],
-                });
-            }
-        }
+        println!("Existing match: {}", existing_match.name);
     }
 
     response

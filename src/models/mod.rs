@@ -1,5 +1,6 @@
 use crate::schema::{matches, users};
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 
 #[derive(Queryable, Identifiable, Associations, Serialize, Deserialize)]
 #[belongs_to(Match)]
@@ -23,5 +24,5 @@ pub struct MatchWithUsers {
     pub id: i32,
     pub name: String,
     pub players_count: i32,
-    pub users: Vec<User>,
+    pub users: HashMap<i32, User>,
 }
