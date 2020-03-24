@@ -39,6 +39,22 @@ pub fn show_all_matches() -> Vec<(Match, Vec<User>)> {
     data
 }
 
+fn insert_user(user: &Option<User>, users: &mut HashMap<i32, User>) {
+    match user {
+        Some(existing_user_in_match) => {
+            users.insert(
+                existing_user_in_match.id,
+                User {
+                    id: existing_user_in_match.id,
+                    name: existing_user_in_match.name.clone(),
+                    match_id: existing_user_in_match.match_id,
+                },
+            );
+        }
+        None => println!("No user found for this match."),
+    }
+}
+
 pub fn show_all_matches2() -> HashMap<i32, MatchWithUsers> {
     use schema::*;
 
@@ -52,28 +68,24 @@ pub fn show_all_matches2() -> HashMap<i32, MatchWithUsers> {
     let mut response: HashMap<i32, MatchWithUsers> = HashMap::new();
 
     for (m, u) in &query_result {
-        let mut users: HashMap<i32, User> = HashMap::new();
-        match u {
-            Some(existing_user_in_match) => {
-                users.insert(
-                    existing_user_in_match.id,
-                    User {
-                        id: existing_user_in_match.id,
-                        name: existing_user_in_match.name.clone(),
-                        match_id: existing_user_in_match.match_id,
+        match response.get(&m.id) {
+            Some(existing_match) => insert_user(u, &mut existing_match.users),
+            None => {
+                let mut users: HashMap<i32, User> = HashMap::new();
+
+                insert_user(u, &mut users);
+
+                response.insert(
+                    m.id,
+                    MatchWithUsers {
+                        id: m.id,
+                        name: m.name.clone(),
+                        players_count: m.players_count,
+                        users: users,
                     },
                 );
             }
-            None => println!("No user found for this match: {}", m.name),
         }
-        let existing_match = response.entry(m.id).or_insert(MatchWithUsers {
-            id: m.id,
-            name: m.name.clone(),
-            players_count: m.players_count,
-            users: users,
-        });
-
-        println!("Existing match: {}", existing_match.name);
     }
 
     response
