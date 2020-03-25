@@ -5,9 +5,10 @@ extern crate dotenv;
 pub mod models;
 pub mod schema;
 
+use itertools::Itertools;
+
 use diesel::prelude::*;
 use models::*;
-use std::collections::HashMap;
 // use diesel::pg::PgConnection;
 use dotenv::dotenv;
 use std::env;
@@ -39,23 +40,7 @@ pub fn show_all_matches() -> Vec<(Match, Vec<User>)> {
     data
 }
 
-fn insert_user(user: &Option<User>, users: &mut HashMap<i32, User>) {
-    match user {
-        Some(existing_user_in_match) => {
-            users.insert(
-                existing_user_in_match.id,
-                User {
-                    id: existing_user_in_match.id,
-                    name: existing_user_in_match.name.clone(),
-                    match_id: existing_user_in_match.match_id,
-                },
-            );
-        }
-        None => println!("No user found for this match."),
-    }
-}
-
-pub fn show_all_matches2() -> HashMap<i32, MatchWithUsers> {
+pub fn show_all_matches2() -> Vec<MatchWithUsers> {
     use schema::*;
 
     let connection = establish_connection();
@@ -65,28 +50,31 @@ pub fn show_all_matches2() -> HashMap<i32, MatchWithUsers> {
         .load(&connection)
         .expect("Error loading matches");
 
-    let mut response: HashMap<i32, MatchWithUsers> = HashMap::new();
-
-    for (m, u) in &query_result {
-        match response.get(&m.id) {
-            Some(existing_match) => insert_user(u, &mut existing_match.users),
-            None => {
-                let mut users: HashMap<i32, User> = HashMap::new();
-
-                insert_user(u, &mut users);
-
-                response.insert(
-                    m.id,
-                    MatchWithUsers {
-                        id: m.id,
-                        name: m.name.clone(),
-                        players_count: m.players_count,
-                        users: users,
-                    },
-                );
+    let response: Vec<_> = query_result
+        .into_iter()
+        // Note that this assumes that `query_result` is sorted by match id since
+        // `group_by` only considers consecutive matches.
+        .group_by(|(m, _)| m.id)
+        .into_iter()
+        .map(|(id, mut g)| {
+            // Now `g` is an iterator of `(Match, Option<User>)` where all the
+            // matches are the same. We take the first item to get the match
+            // information. Note that it is safe to unwrap here because `group_by`
+            // would never call us with an empty `g`.
+            let (m, u) = g.next().unwrap();
+            MatchWithUsers {
+                id: id,
+                name: m.name,
+                players_count: m.players_count,
+                // We got the first user along with the match information, now
+                // we append the other users from the remaining items in `g`.
+                users: u
+                    .into_iter()
+                    .chain(g.flat_map(|(_, u)| u.into_iter()))
+                    .collect(),
             }
-        }
-    }
+        })
+        .collect();
 
     response
 }
