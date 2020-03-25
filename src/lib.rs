@@ -20,27 +20,7 @@ pub fn establish_connection() -> PgConnection {
     PgConnection::establish(&database_url).expect(&format!("Error connecting to {}", database_url))
 }
 
-pub fn show_all_matches() -> Vec<(Match, Vec<User>)> {
-    use schema::matches;
-
-    let connection = establish_connection();
-
-    let matches_vec = matches::table
-        .load::<Match>(&connection)
-        .expect("error loading matches");
-
-    let users_vec = User::belonging_to(&matches_vec)
-        .load::<User>(&connection)
-        .expect("error loading users")
-        .grouped_by(&matches_vec);
-    let my_query = matches_vec.into_iter().zip(users_vec);
-    let data = my_query.collect::<Vec<_>>();
-
-    println!("Displaying {} matches", data.len());
-    data
-}
-
-pub fn show_all_matches2() -> Vec<MatchWithUsers> {
+pub fn show_all_matches() -> Vec<MatchWithUsers> {
     use schema::*;
 
     let connection = establish_connection();
