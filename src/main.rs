@@ -2,16 +2,16 @@
 
 #[macro_use]
 extern crate rocket;
-#[macro_use]
-extern crate rocket_contrib;
 extern crate diesel;
+extern crate dotenv;
+extern crate rocket_contrib;
 
-use got_board_api_v3::*;
 use rocket_contrib::json::JsonValue;
+use serde_json::json;
 
 #[get("/matches")]
 fn read() -> JsonValue {
-    json!(show_all_matches())
+    json!(models::Match::all())
 }
 
 fn main() {
