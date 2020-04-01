@@ -18,12 +18,18 @@ use rocket_contrib::json::{Json, JsonValue};
 
 #[post("/matches", format = "json", data = "<mat>")]
 fn create(mat: Json<MatchAttr>) -> JsonValue {
-    let insert = MatchAttr { ..mat.into_inner() };
-    json!(Match::create(insert))
+    let match_attributes = MatchAttr { ..mat.into_inner() };
+    json!(Match::create(match_attributes))
+}
+
+#[put("/matches/<id>", format = "json", data = "<mat>")]
+fn update(id: i32, mat: Json<MatchAttr>) -> JsonValue {
+    let match_attributes = MatchAttr { ..mat.into_inner() };
+    json!(Match::update(id, match_attributes))
 }
 
 #[get("/matches")]
-fn read() -> JsonValue {
+fn all() -> JsonValue {
     json!(Match::all())
 }
 
@@ -34,6 +40,6 @@ fn delete(id: i32) -> JsonValue {
 
 fn main() {
     rocket::ignite()
-        .mount("/", routes![read, create, delete])
+        .mount("/", routes![all, create, delete, update])
         .launch();
 }

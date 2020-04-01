@@ -13,7 +13,7 @@ pub struct User {
     pub match_id: i32,
 }
 
-#[derive(Deserialize, Insertable)]
+#[derive(Deserialize, Insertable, AsChangeset)]
 #[table_name = "matches"]
 pub struct MatchAttr {
     pub name: String,
@@ -50,6 +50,15 @@ impl Match {
         let connection = db::establish_connection();
 
         diesel::delete(matches::table.find(id))
+            .execute(&connection)
+            .is_ok()
+    }
+
+    pub fn update(id: i32, mat: MatchAttr) -> bool {
+        let connection = db::establish_connection();
+
+        diesel::update(matches::table.find(id))
+            .set(&mat)
             .execute(&connection)
             .is_ok()
     }
