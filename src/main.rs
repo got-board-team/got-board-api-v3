@@ -16,6 +16,16 @@ extern crate rocket_contrib;
 use models::{Match, MatchAttr};
 use rocket_contrib::json::{Json, JsonValue};
 
+#[get("/matches")]
+fn all() -> JsonValue {
+    json!(Match::all())
+}
+
+#[get("/matches/<id>")]
+fn get(id: i32) -> JsonValue {
+    json!(Match::get(id))
+}
+
 #[post("/matches", format = "json", data = "<mat>")]
 fn create(mat: Json<MatchAttr>) -> JsonValue {
     let match_attributes = MatchAttr { ..mat.into_inner() };
@@ -28,11 +38,6 @@ fn update(id: i32, mat: Json<MatchAttr>) -> JsonValue {
     json!(Match::update(id, match_attributes))
 }
 
-#[get("/matches")]
-fn all() -> JsonValue {
-    json!(Match::all())
-}
-
 #[delete("/matches/<id>")]
 fn delete(id: i32) -> JsonValue {
     json!({ "success": Match::delete(id) })
@@ -40,6 +45,6 @@ fn delete(id: i32) -> JsonValue {
 
 fn main() {
     rocket::ignite()
-        .mount("/", routes![all, create, delete, update])
+        .mount("/", routes![all, get, create, update, delete])
         .launch();
 }

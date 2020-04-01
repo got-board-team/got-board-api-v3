@@ -37,6 +37,15 @@ pub struct MatchWithUsers {
 }
 
 impl Match {
+    pub fn get(id: i32) -> Match {
+        let connection = db::establish_connection();
+
+        matches::table
+            .find(id)
+            .first(&connection)
+            .expect("Could not load user")
+    }
+
     pub fn create(mat: MatchAttr) -> Match {
         let connection = db::establish_connection();
 
