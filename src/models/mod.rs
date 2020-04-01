@@ -13,6 +13,13 @@ pub struct User {
     pub match_id: i32,
 }
 
+#[derive(Deserialize, Insertable)]
+#[table_name = "matches"]
+pub struct MatchAttr {
+    pub name: String,
+    pub players_count: i32,
+}
+
 #[derive(Queryable, Identifiable, Serialize, Deserialize, Insertable)]
 #[table_name = "matches"]
 pub struct Match {
@@ -30,7 +37,7 @@ pub struct MatchWithUsers {
 }
 
 impl Match {
-    pub fn create(mat: Match) -> Match {
+    pub fn create(mat: MatchAttr) -> Match {
         let connection = db::establish_connection();
 
         diesel::insert_into(matches::table)
