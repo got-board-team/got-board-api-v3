@@ -27,6 +27,13 @@ fn read() -> JsonValue {
     json!(Match::all())
 }
 
+#[delete("/matches/<id>")]
+fn delete(id: i32) -> JsonValue {
+    json!({ "success": Match::delete(id) })
+}
+
 fn main() {
-    rocket::ignite().mount("/", routes![read, create]).launch();
+    rocket::ignite()
+        .mount("/", routes![read, create, delete])
+        .launch();
 }

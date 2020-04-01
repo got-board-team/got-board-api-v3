@@ -46,6 +46,14 @@ impl Match {
             .expect("Error saving new match")
     }
 
+    pub fn delete(id: i32) -> bool {
+        let connection = db::establish_connection();
+
+        diesel::delete(matches::table.find(id))
+            .execute(&connection)
+            .is_ok()
+    }
+
     pub fn all() -> Vec<MatchWithUsers> {
         let connection = db::establish_connection();
 
