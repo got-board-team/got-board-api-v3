@@ -50,9 +50,9 @@ fn delete(id: i32) -> JsonValue {
 #[post("/messages", format = "json", data = "<message>")]
 fn pusher_message(message: Json<Message>) -> JsonValue {
     dotenv().ok();
-    let api_id = dotenv::var("API_ID").expect("API_ID is not loaded");
-    let key = dotenv::var("KEY").expect("Pusher KEY not set");
-    let app_secret = dotenv::var("APP_SECRET").expect("Pusher APP_SECRET not set");
+    let api_id = dotenv::var("PUSHER_API_ID").expect("API_ID is not loaded");
+    let key = dotenv::var("PUSHER_KEY").expect("Pusher KEY not set");
+    let app_secret = dotenv::var("PUSHER_APP_SECRET").expect("Pusher APP_SECRET not set");
     let mut pusher = Pusher::new(&api_id, &key, &app_secret).finalize();
     let msg = Message {
         ..message.into_inner()
