@@ -1,4 +1,4 @@
-CREATE TABLE matches (
+CREATE TABLE IF NOT EXISTS matches (
   id SERIAL PRIMARY KEY,
   name VARCHAR NOT NULL,
   players_count SERIAL NOT NULL
