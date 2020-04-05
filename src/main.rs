@@ -3,6 +3,7 @@
 #[macro_use]
 extern crate diesel;
 extern crate dotenv;
+extern crate pusher;
 
 pub mod db;
 pub mod models;
@@ -13,7 +14,9 @@ extern crate rocket;
 #[macro_use]
 extern crate rocket_contrib;
 
-use models::{Match, MatchAttr};
+use dotenv::dotenv;
+use models::{Match, MatchAttr, Message};
+use pusher::Pusher;
 use rocket_contrib::json::{Json, JsonValue};
 
 #[get("/matches")]
@@ -43,8 +46,29 @@ fn delete(id: i32) -> JsonValue {
     json!({ "success": Match::delete(id) })
 }
 
+#[post("/messages", format = "json", data = "<message>")]
+fn pusher_message(message: Json<Message>) -> JsonValue {
+    dotenv().ok();
+    let api_id = dotenv::var("API_ID").expect("API_ID is not loaded");
+    let key = dotenv::var("KEY").expect("Pusher KEY not set");
+    let app_secret = dotenv::var("APP_SECRET").expect("Pusher APP_SECRET not set");
+    let mut pusher = Pusher::new(&api_id, &key, &app_secret).finalize();
+    match pusher.trigger("game", "update", "message-here") {
+        Ok(_) => json!({ "success": Message{ ..message.into_inner() } }),
+        Err(error) => json!({ "error": error }),
+    }
+}
+
 fn main() {
+    dotenv().ok();
+    // let result: Vec<(String, String)> = dotenv::vars().collect();
+    // for r in result {
+    //     println!("{}: {}", r.0, r.1);
+    // }
     rocket::ignite()
-        .mount("/", routes![all, get, create, update, delete])
+        .mount(
+            "/",
+            routes![all, get, create, update, delete, pusher_message],
+        )
         .launch();
 }
