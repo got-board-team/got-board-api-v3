@@ -221,6 +221,7 @@ dependencies = [
  "rocket",
  "rocket_codegen",
  "rocket_contrib",
+ "rustc-serialize",
  "serde",
 ]
 

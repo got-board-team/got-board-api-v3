@@ -4,6 +4,7 @@
 extern crate diesel;
 extern crate dotenv;
 extern crate pusher;
+extern crate rustc_serialize;
 
 pub mod db;
 pub mod models;
@@ -53,18 +54,16 @@ fn pusher_message(message: Json<Message>) -> JsonValue {
     let key = dotenv::var("KEY").expect("Pusher KEY not set");
     let app_secret = dotenv::var("APP_SECRET").expect("Pusher APP_SECRET not set");
     let mut pusher = Pusher::new(&api_id, &key, &app_secret).finalize();
-    match pusher.trigger("game", "update", "message-here") {
-        Ok(_) => json!({ "success": Message{ ..message.into_inner() } }),
+    let msg = Message {
+        ..message.into_inner()
+    };
+    match pusher.trigger("game", "update", &msg) {
+        Ok(_) => json!({ "success": &msg }),
         Err(error) => json!({ "error": error }),
     }
 }
 
 fn main() {
-    dotenv().ok();
-    // let result: Vec<(String, String)> = dotenv::vars().collect();
-    // for r in result {
-    //     println!("{}: {}", r.0, r.1);
-    // }
     rocket::ignite()
         .mount(
             "/",
