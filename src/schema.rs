@@ -9,9 +9,14 @@ table! {
 table! {
     users (id) {
         id -> Int4,
+        email -> Varchar,
         name -> Varchar,
-        match_id -> Int4,
+        created_at -> Timestamp,
+        updated_at -> Timestamp,
     }
 }
 
-allow_tables_to_appear_in_same_query!(matches, users,);
+allow_tables_to_appear_in_same_query!(
+    matches,
+    users,
+);
