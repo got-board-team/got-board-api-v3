@@ -43,8 +43,13 @@ fn delete(id: i32) -> JsonValue {
     json!({ "success": Match::delete(id) })
 }
 
+#[post("/matches/<id>/join", format = "json", data = "<user_id>")]
+fn join(id: i32, user_id: Json<i32>) -> JsonValue {
+    json!(Match::join(id, user_id.0))
+}
+
 fn main() {
     rocket::ignite()
-        .mount("/", routes![all, get, create, update, delete])
+        .mount("/", routes![all, get, create, update, delete, join])
         .launch();
 }

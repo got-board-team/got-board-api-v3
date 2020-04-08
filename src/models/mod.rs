@@ -1,19 +1,18 @@
 use crate::db;
-use crate::schema::{matches, users};
+use crate::schema::{matches, matches_users, users};
 use diesel::prelude::*;
-use itertools::Itertools;
 use serde::{Deserialize, Serialize};
+// https://stackoverflow.com/questions/38676229/timestamp-in-rusts-diesel-library-with-postgres
+use std::time::SystemTime;
 
-#[derive(Queryable, Identifiable, Associations, Serialize, Deserialize)]
-#[belongs_to(Match)]
+#[derive(Queryable, Identifiable, Serialize, Deserialize)]
 #[table_name = "users"]
 pub struct User {
     pub id: i32,
     pub name: String,
-    pub match_id: i32,
 }
 
-#[derive(Deserialize, Insertable, AsChangeset)]
+#[derive(Insertable, Deserialize, AsChangeset)]
 #[table_name = "matches"]
 pub struct MatchAttr {
     pub name: String,
@@ -26,6 +25,17 @@ pub struct Match {
     pub id: i32,
     pub name: String,
     pub players_count: i32,
+}
+
+#[derive(Queryable, Identifiable, Associations, Serialize, Deserialize)]
+#[belongs_to(User)]
+#[belongs_to(Match)]
+#[table_name = "matches_users"]
+pub struct MatchesUsers {
+    pub id: i32,
+    pub match_id: i32,
+    pub user_id: i32,
+    pub created_at: SystemTime,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -43,7 +53,7 @@ impl Match {
         matches::table
             .find(id)
             .first(&connection)
-            .expect("Could not load user")
+            .expect("Could not load match")
     }
 
     pub fn create(mat: MatchAttr) -> Match {
@@ -52,6 +62,19 @@ impl Match {
         diesel::insert_into(matches::table)
             .values(&mat)
             .get_result::<Match>(&connection)
+            .expect("Error saving new match")
+    }
+
+    pub fn join(match_id: i32, user_id: i32) -> MatchesUsers {
+        let connection = db::establish_connection();
+
+        diesel::insert_into(matches_users::table)
+            .values((
+                matches_users::columns::match_id.eq(&match_id),
+                matches_users::columns::user_id.eq(&user_id),
+                matches_users::columns::created_at.eq(diesel::dsl::now),
+            ))
+            .get_result::<MatchesUsers>(&connection)
             .expect("Error saving new match")
     }
 
@@ -72,40 +95,16 @@ impl Match {
             .is_ok()
     }
 
-    pub fn all() -> Vec<MatchWithUsers> {
-        let connection = db::establish_connection();
+    pub fn all() { //-> Vec<MatchWithUsers> {
+                   // let connection = db::establish_connection();
 
-        let query_result: Vec<(Match, Option<User>)> = matches::table
-            .left_join(users::table.on(users::match_id.eq(matches::id)))
-            .load(&connection)
-            .expect("Error loading matches");
+        // let matches = matches::table
+        //     .load::<Match>(&connection)
+        //     .expect("Cound not load matches");
 
-        let response: Vec<_> = query_result
-            .into_iter()
-            // Note that this assumes that `query_result` is sorted by match id since
-            // `group_by` only considers consecutive matches.
-            .group_by(|(m, _)| m.id)
-            .into_iter()
-            .map(|(id, mut g)| {
-                // Now `g` is an iterator of `(Match, Option<User>)` where all the
-                // matches are the same. We take the first item to get the match
-                // information. Note that it is safe to unwrap here because `group_by`
-                // would never call us with an empty `g`.
-                let (m, u) = g.next().unwrap();
-                MatchWithUsers {
-                    id: id,
-                    name: m.name,
-                    players_count: m.players_count,
-                    // We got the first user along with the match information, now
-                    // we append the other users from the remaining items in `g`.
-                    users: u
-                        .into_iter()
-                        .chain(g.flat_map(|(_, u)| u.into_iter()))
-                        .collect(),
-                }
-            })
-            .collect();
-
-        response
+        // MatchesUsers::belonging_to(&matches)
+        //     .left_join(users::table)
+        //     .load::<MatchesUsers>(&connection)
+        //     .expect("Could not load matches_users records")
     }
 }
