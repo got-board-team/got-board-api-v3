@@ -29,7 +29,16 @@ fn main() {
                 routes::matches::join,
             ],
         )
-        .mount("/users", routes![routes::users::all])
+        .mount(
+            "/users",
+            routes![
+                routes::users::all,
+                routes::users::get,
+                routes::users::create,
+                routes::users::update,
+                routes::users::delete,
+            ],
+        )
         .mount("/", routes![routes::websocket::pusher_message])
         .launch();
 }

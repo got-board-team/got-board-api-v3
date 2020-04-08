@@ -36,12 +36,38 @@ pub mod matches {
 }
 
 pub mod users {
-    use crate::models::User;
-    use rocket_contrib::json::JsonValue;
+    use crate::models::{User, UserAttr};
+    use rocket_contrib::json::{Json, JsonValue};
 
     #[get("/")]
     pub fn all() -> JsonValue {
         json!(User::all())
+    }
+
+    #[get("/<id>")]
+    pub fn get(id: i32) -> JsonValue {
+        json!(User::get(id))
+    }
+
+    #[post("/", format = "json", data = "<user>")]
+    pub fn create(user: Json<UserAttr>) -> JsonValue {
+        let user_attributes = UserAttr {
+            ..user.into_inner()
+        };
+        json!(User::create(user_attributes))
+    }
+
+    #[put("/<id>", format = "json", data = "<user>")]
+    pub fn update(id: i32, user: Json<UserAttr>) -> JsonValue {
+        let user_attributes = UserAttr {
+            ..user.into_inner()
+        };
+        json!(User::update(id, user_attributes))
+    }
+
+    #[delete("/<id>")]
+    pub fn delete(id: i32) -> JsonValue {
+        json!({ "success": User::delete(id) })
     }
 }
 

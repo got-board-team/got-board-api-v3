@@ -5,6 +5,13 @@ use serde::{Deserialize, Serialize};
 // https://stackoverflow.com/questions/38676229/timestamp-in-rusts-diesel-library-with-postgres
 use chrono::NaiveDateTime;
 
+#[derive(Insertable, Deserialize, AsChangeset)]
+#[table_name = "users"]
+pub struct UserAttr {
+    pub email: String,
+    pub name: String,
+}
+
 #[derive(Queryable, Identifiable, Serialize, Deserialize)]
 #[table_name = "users"]
 pub struct User {
@@ -119,5 +126,44 @@ impl User {
         users::table
             .load::<User>(&connection)
             .expect("Cound not load users")
+    }
+
+    pub fn get(id: i32) -> User {
+        let connection = db::establish_connection();
+
+        users::table
+            .find(id)
+            .first(&connection)
+            .expect("Could not load user")
+    }
+
+    pub fn create(user: UserAttr) -> User {
+        let connection = db::establish_connection();
+
+        diesel::insert_into(users::table)
+            .values((
+                &user,
+                users::columns::created_at.eq(diesel::dsl::now),
+                users::columns::updated_at.eq(diesel::dsl::now),
+            ))
+            .get_result::<User>(&connection)
+            .expect("Error saving new user")
+    }
+
+    pub fn update(id: i32, user: UserAttr) -> bool {
+        let connection = db::establish_connection();
+
+        diesel::update(users::table.find(id))
+            .set(&user)
+            .execute(&connection)
+            .is_ok()
+    }
+
+    pub fn delete(id: i32) -> bool {
+        let connection = db::establish_connection();
+
+        diesel::delete(users::table.find(id))
+            .execute(&connection)
+            .is_ok()
     }
 }
