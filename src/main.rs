@@ -8,6 +8,7 @@ extern crate rustc_serialize;
 
 pub mod db;
 pub mod models;
+pub mod routes;
 pub mod schema;
 
 #[macro_use]
@@ -16,41 +17,9 @@ extern crate rocket;
 extern crate rocket_contrib;
 
 use dotenv::dotenv;
-use models::{Match, MatchAttr, Message};
+use models::Message;
 use pusher::Pusher;
 use rocket_contrib::json::{Json, JsonValue};
-
-#[get("/matches")]
-fn all() -> JsonValue {
-    json!(Match::all())
-}
-
-#[get("/matches/<id>")]
-fn get(id: i32) -> JsonValue {
-    json!(Match::get(id))
-}
-
-#[post("/matches", format = "json", data = "<mat>")]
-fn create(mat: Json<MatchAttr>) -> JsonValue {
-    let match_attributes = MatchAttr { ..mat.into_inner() };
-    json!(Match::create(match_attributes))
-}
-
-#[put("/matches/<id>", format = "json", data = "<mat>")]
-fn update(id: i32, mat: Json<MatchAttr>) -> JsonValue {
-    let match_attributes = MatchAttr { ..mat.into_inner() };
-    json!(Match::update(id, match_attributes))
-}
-
-#[delete("/matches/<id>")]
-fn delete(id: i32) -> JsonValue {
-    json!({ "success": Match::delete(id) })
-}
-
-#[post("/matches/<id>/join", format = "json", data = "<user_id>")]
-fn join(id: i32, user_id: Json<i32>) -> JsonValue {
-    json!(Match::join(id, user_id.0))
-}
 
 #[post("/messages", format = "json", data = "<message>")]
 fn pusher_message(message: Json<Message>) -> JsonValue {
@@ -71,8 +40,16 @@ fn pusher_message(message: Json<Message>) -> JsonValue {
 fn main() {
     rocket::ignite()
         .mount(
-            "/",
-            routes![all, get, create, update, delete, join, pusher_message],
+            "/matches",
+            routes![
+                routes::matches::all,
+                routes::matches::get,
+                routes::matches::create,
+                routes::matches::update,
+                routes::matches::delete,
+                routes::matches::join,
+            ],
         )
+        .mount("/", routes![pusher_message])
         .launch();
 }
