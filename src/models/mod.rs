@@ -95,16 +95,11 @@ impl Match {
             .is_ok()
     }
 
-    pub fn all() { //-> Vec<MatchWithUsers> {
-                   // let connection = db::establish_connection();
+    pub fn all() -> Vec<Match> {
+        let connection = db::establish_connection();
 
-        // let matches = matches::table
-        //     .load::<Match>(&connection)
-        //     .expect("Cound not load matches");
-
-        // MatchesUsers::belonging_to(&matches)
-        //     .left_join(users::table)
-        //     .load::<MatchesUsers>(&connection)
-        //     .expect("Could not load matches_users records")
+        matches::table
+            .load::<Match>(&connection)
+            .expect("Cound not load matches")
     }
 }
