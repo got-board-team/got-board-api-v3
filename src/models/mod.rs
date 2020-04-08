@@ -3,13 +3,23 @@ use crate::schema::{matches, matches_users, users};
 use diesel::prelude::*;
 use serde::{Deserialize, Serialize};
 // https://stackoverflow.com/questions/38676229/timestamp-in-rusts-diesel-library-with-postgres
-use std::time::SystemTime;
+use chrono::NaiveDateTime;
+
+#[derive(Insertable, Deserialize, AsChangeset)]
+#[table_name = "users"]
+pub struct UserAttr {
+    pub email: String,
+    pub name: String,
+}
 
 #[derive(Queryable, Identifiable, Serialize, Deserialize)]
 #[table_name = "users"]
 pub struct User {
     pub id: i32,
+    pub email: String,
     pub name: String,
+    pub created_at: NaiveDateTime,
+    pub updated_at: NaiveDateTime,
 }
 
 #[derive(Insertable, Deserialize, AsChangeset)]
@@ -25,6 +35,8 @@ pub struct Match {
     pub id: i32,
     pub name: String,
     pub players_count: i32,
+    pub created_at: NaiveDateTime,
+    pub updated_at: NaiveDateTime,
 }
 
 #[derive(Queryable, Identifiable, Associations, Serialize, Deserialize)]
@@ -35,7 +47,7 @@ pub struct MatchesUsers {
     pub id: i32,
     pub match_id: i32,
     pub user_id: i32,
-    pub created_at: SystemTime,
+    pub created_at: NaiveDateTime,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -65,7 +77,11 @@ impl Match {
         let connection = db::establish_connection();
 
         diesel::insert_into(matches::table)
-            .values(&mat)
+            .values((
+                &mat,
+                matches::columns::created_at.eq(diesel::dsl::now),
+                matches::columns::updated_at.eq(diesel::dsl::now),
+            ))
             .get_result::<Match>(&connection)
             .expect("Error saving new match")
     }
@@ -106,5 +122,54 @@ impl Match {
         matches::table
             .load::<Match>(&connection)
             .expect("Cound not load matches")
+    }
+}
+
+impl User {
+    pub fn all() -> Vec<User> {
+        let connection = db::establish_connection();
+
+        users::table
+            .load::<User>(&connection)
+            .expect("Cound not load users")
+    }
+
+    pub fn get(id: i32) -> User {
+        let connection = db::establish_connection();
+
+        users::table
+            .find(id)
+            .first(&connection)
+            .expect("Could not load user")
+    }
+
+    pub fn create(user: UserAttr) -> User {
+        let connection = db::establish_connection();
+
+        diesel::insert_into(users::table)
+            .values((
+                &user,
+                users::columns::created_at.eq(diesel::dsl::now),
+                users::columns::updated_at.eq(diesel::dsl::now),
+            ))
+            .get_result::<User>(&connection)
+            .expect("Error saving new user")
+    }
+
+    pub fn update(id: i32, user: UserAttr) -> bool {
+        let connection = db::establish_connection();
+
+        diesel::update(users::table.find(id))
+            .set(&user)
+            .execute(&connection)
+            .is_ok()
+    }
+
+    pub fn delete(id: i32) -> bool {
+        let connection = db::establish_connection();
+
+        diesel::delete(users::table.find(id))
+            .execute(&connection)
+            .is_ok()
     }
 }
