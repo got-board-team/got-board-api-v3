@@ -9,7 +9,10 @@ use std::time::SystemTime;
 #[table_name = "users"]
 pub struct User {
     pub id: i32,
+    pub email: String,
     pub name: String,
+    pub created_at: SystemTime,
+    pub updated_at: SystemTime,
 }
 
 #[derive(Insertable, Deserialize, AsChangeset)]
@@ -106,5 +109,15 @@ impl Match {
         matches::table
             .load::<Match>(&connection)
             .expect("Cound not load matches")
+    }
+}
+
+impl User {
+    pub fn all() -> Vec<User> {
+        let connection = db::establish_connection();
+
+        users::table
+            .load::<User>(&connection)
+            .expect("Cound not load users")
     }
 }

@@ -35,6 +35,16 @@ pub mod matches {
     }
 }
 
+pub mod users {
+    use crate::models::User;
+    use rocket_contrib::json::JsonValue;
+
+    #[get("/")]
+    pub fn all() -> JsonValue {
+        json!(User::all())
+    }
+}
+
 pub mod websocket {
     use crate::models::Message;
     use dotenv::dotenv;
