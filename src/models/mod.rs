@@ -35,6 +35,8 @@ pub struct Match {
     pub id: i32,
     pub name: String,
     pub players_count: i32,
+    pub created_at: NaiveDateTime,
+    pub updated_at: NaiveDateTime,
 }
 
 #[derive(Queryable, Identifiable, Associations, Serialize, Deserialize)]
@@ -75,7 +77,11 @@ impl Match {
         let connection = db::establish_connection();
 
         diesel::insert_into(matches::table)
-            .values(&mat)
+            .values((
+                &mat,
+                matches::columns::created_at.eq(diesel::dsl::now),
+                matches::columns::updated_at.eq(diesel::dsl::now),
+            ))
             .get_result::<Match>(&connection)
             .expect("Error saving new match")
     }
