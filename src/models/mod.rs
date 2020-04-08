@@ -3,7 +3,7 @@ use crate::schema::{matches, matches_users, users};
 use diesel::prelude::*;
 use serde::{Deserialize, Serialize};
 // https://stackoverflow.com/questions/38676229/timestamp-in-rusts-diesel-library-with-postgres
-use std::time::SystemTime;
+use chrono::NaiveDateTime;
 
 #[derive(Queryable, Identifiable, Serialize, Deserialize)]
 #[table_name = "users"]
@@ -11,8 +11,8 @@ pub struct User {
     pub id: i32,
     pub email: String,
     pub name: String,
-    pub created_at: SystemTime,
-    pub updated_at: SystemTime,
+    pub created_at: NaiveDateTime,
+    pub updated_at: NaiveDateTime,
 }
 
 #[derive(Insertable, Deserialize, AsChangeset)]
@@ -38,7 +38,7 @@ pub struct MatchesUsers {
     pub id: i32,
     pub match_id: i32,
     pub user_id: i32,
-    pub created_at: SystemTime,
+    pub created_at: NaiveDateTime,
 }
 
 #[derive(Serialize, Deserialize)]

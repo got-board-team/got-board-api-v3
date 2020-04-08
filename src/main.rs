@@ -6,6 +6,7 @@ extern crate rocket;
 extern crate rocket_contrib;
 #[macro_use]
 extern crate diesel;
+extern crate chrono;
 extern crate dotenv;
 extern crate pusher;
 extern crate rustc_serialize;
