@@ -46,6 +46,11 @@ pub struct MatchWithUsers {
     pub users: Vec<User>,
 }
 
+#[derive(Serialize, Deserialize, RustcEncodable)]
+pub struct Message {
+    pub name: String,
+}
+
 impl Match {
     pub fn get(id: i32) -> Match {
         let connection = db::establish_connection();
