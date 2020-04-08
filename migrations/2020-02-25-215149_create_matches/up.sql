@@ -1,5 +1,7 @@
 CREATE TABLE IF NOT EXISTS matches (
   id SERIAL PRIMARY KEY,
   name VARCHAR NOT NULL,
-  players_count SERIAL NOT NULL
+  players_count INT NOT NULL,
+  created_at TIMESTAMP NOT NULL,
+  updated_at TIMESTAMP NOT NULL
 )

@@ -47,6 +47,11 @@ fn delete(id: i32) -> JsonValue {
     json!({ "success": Match::delete(id) })
 }
 
+#[post("/matches/<id>/join", format = "json", data = "<user_id>")]
+fn join(id: i32, user_id: Json<i32>) -> JsonValue {
+    json!(Match::join(id, user_id.0))
+}
+
 #[post("/messages", format = "json", data = "<message>")]
 fn pusher_message(message: Json<Message>) -> JsonValue {
     dotenv().ok();
@@ -67,7 +72,7 @@ fn main() {
     rocket::ignite()
         .mount(
             "/",
-            routes![all, get, create, update, delete, pusher_message],
+            routes![all, get, create, update, delete, join, pusher_message],
         )
         .launch();
 }
