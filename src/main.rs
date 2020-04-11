@@ -4,6 +4,7 @@
 extern crate rocket;
 #[macro_use]
 extern crate rocket_contrib;
+extern crate rocket_cors;
 #[macro_use]
 extern crate diesel;
 extern crate chrono;
@@ -17,7 +18,12 @@ pub mod routes;
 pub mod schema;
 
 fn main() {
+    let default_cors = rocket_cors::CorsOptions::default()
+        .to_cors()
+        .expect("error while building CORS");
+
     rocket::ignite()
+        .attach(default_cors)
         .mount(
             "/matches",
             routes![
