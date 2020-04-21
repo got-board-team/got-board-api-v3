@@ -73,7 +73,7 @@ pub struct Message {
 }
 
 impl Match {
-    pub fn get(id: i32) -> Vec<MatchWithUsers> {
+    pub fn get(id: i32) -> MatchWithUsers {
         let connection = db::establish_connection();
 
         let query_result: Vec<(Match, Option<MatchesUsers>)> = matches::table
@@ -82,7 +82,7 @@ impl Match {
             .load(&connection)
             .expect("Could not load matches with players");
 
-        let response: Vec<_> = query_result
+        let response: _ = query_result
             .into_iter()
             // Note that this assumes that `query_result` is sorted by match id since
             // `group_by` only considers consecutive matches.
@@ -106,7 +106,8 @@ impl Match {
                         .collect(),
                 }
             })
-            .collect();
+            .nth(0)
+            .unwrap();
 
         response
     }
