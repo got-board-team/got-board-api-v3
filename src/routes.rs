@@ -1,5 +1,5 @@
 pub mod matches {
-    use crate::models::{Match, MatchAttr};
+    use crate::models::{Match, MatchAttr, MatchesUsersAttr};
     use rocket_contrib::json::{Json, JsonValue};
 
     #[get("/")]
@@ -29,9 +29,16 @@ pub mod matches {
         json!({ "success": Match::delete(id) })
     }
 
-    #[post("/<id>/join", format = "json", data = "<user_id>")]
-    pub fn join(id: i32, user_id: Json<i32>) -> JsonValue {
-        json!(Match::join(id, user_id.0))
+    #[post("/<id>/join", format = "json", data = "<join_params>")]
+    pub fn join(id: i32, join_params: Json<MatchesUsersAttr>) -> JsonValue {
+        let join_match_attributes = MatchesUsersAttr {
+            ..join_params.into_inner()
+        };
+        json!(Match::join(
+            id,
+            join_match_attributes.user_id,
+            join_match_attributes.house_name
+        ))
     }
 }
 

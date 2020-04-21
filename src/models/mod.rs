@@ -47,7 +47,15 @@ pub struct MatchesUsers {
     pub id: i32,
     pub match_id: i32,
     pub user_id: i32,
+    pub house_name: String,
     pub created_at: NaiveDateTime,
+}
+
+#[derive(Insertable, Deserialize)]
+#[table_name = "matches_users"]
+pub struct MatchesUsersAttr {
+    pub user_id: i32,
+    pub house_name: String,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -86,13 +94,14 @@ impl Match {
             .expect("Error saving new match")
     }
 
-    pub fn join(match_id: i32, user_id: i32) -> MatchesUsers {
+    pub fn join(match_id: i32, user_id: i32, house_name: String) -> MatchesUsers {
         let connection = db::establish_connection();
 
         diesel::insert_into(matches_users::table)
             .values((
                 matches_users::columns::match_id.eq(&match_id),
                 matches_users::columns::user_id.eq(&user_id),
+                matches_users::columns::house_name.eq(&house_name),
                 matches_users::columns::created_at.eq(diesel::dsl::now),
             ))
             .get_result::<MatchesUsers>(&connection)
