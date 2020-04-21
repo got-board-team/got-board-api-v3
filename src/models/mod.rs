@@ -4,6 +4,7 @@ use diesel::prelude::*;
 use serde::{Deserialize, Serialize};
 // https://stackoverflow.com/questions/38676229/timestamp-in-rusts-diesel-library-with-postgres
 use chrono::NaiveDateTime;
+use itertools::Itertools;
 
 #[derive(Insertable, Deserialize, AsChangeset)]
 #[table_name = "users"]
@@ -63,7 +64,7 @@ pub struct MatchWithUsers {
     pub id: i32,
     pub name: String,
     pub players_count: i32,
-    pub users: Vec<User>,
+    pub players: Vec<MatchesUsers>,
 }
 
 #[derive(Serialize, Deserialize, RustcEncodable)]
@@ -72,13 +73,42 @@ pub struct Message {
 }
 
 impl Match {
-    pub fn get(id: i32) -> Match {
+    pub fn get(id: i32) -> Vec<MatchWithUsers> {
         let connection = db::establish_connection();
 
-        matches::table
-            .find(id)
-            .first(&connection)
-            .expect("Could not load match")
+        let query_result: Vec<(Match, Option<MatchesUsers>)> = matches::table
+            .left_join(matches_users::table.on(matches::id.eq(matches_users::match_id)))
+            .filter(matches::id.eq(id))
+            .load(&connection)
+            .expect("Could not load matches with players");
+
+        let response: Vec<_> = query_result
+            .into_iter()
+            // Note that this assumes that `query_result` is sorted by match id since
+            // `group_by` only considers consecutive matches.
+            .group_by(|(m, _)| m.id)
+            .into_iter()
+            .map(|(id, mut g)| {
+                // Now `g` is an iterator of `(Match, Option<User>)` where all the
+                // matches are the same. We take the first item to get the match
+                // information. Note that it is safe to unwrap here because `group_by`
+                // would never call us with an empty `g`.
+                let (m, u) = g.next().unwrap();
+                MatchWithUsers {
+                    id: id,
+                    name: m.name,
+                    players_count: m.players_count,
+                    // We got the first user along with the match information, now
+                    // we append the other users from the remaining items in `g`.
+                    players: u
+                        .into_iter()
+                        .chain(g.flat_map(|(_, u)| u.into_iter()))
+                        .collect(),
+                }
+            })
+            .collect();
+
+        response
     }
 
     pub fn create(mat: MatchAttr) -> Match {
