@@ -13,6 +13,7 @@ table! {
         id -> Int4,
         match_id -> Int4,
         user_id -> Int4,
+        house_name -> Varchar,
         created_at -> Timestamp,
     }
 }
