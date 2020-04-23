@@ -56,6 +56,11 @@ pub mod matches {
         };
         json!(Piece::update(piece_id, updated_piece))
     }
+
+    #[delete("/<_id>/pieces/<piece_id>")]
+    pub fn delete_piece(_id: i32, piece_id: i32) -> JsonValue {
+        json!({ "success": Piece::delete(piece_id) })
+    }
 }
 
 pub mod users {

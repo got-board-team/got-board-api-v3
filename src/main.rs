@@ -36,6 +36,7 @@ fn main() {
                 routes::matches::join,
                 routes::matches::create_piece,
                 routes::matches::update_piece,
+                routes::matches::delete_piece,
             ],
         )
         .mount(

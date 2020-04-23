@@ -258,4 +258,12 @@ impl Piece {
             .execute(&connection)
             .is_ok()
     }
+
+    pub fn delete(id: i32) -> bool {
+        let connection = db::establish_connection();
+
+        diesel::delete(pieces::table.find(id))
+            .execute(&connection)
+            .is_ok()
+    }
 }
