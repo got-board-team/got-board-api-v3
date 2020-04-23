@@ -42,11 +42,19 @@ pub mod matches {
     }
 
     #[post("/<id>/pieces", format = "json", data = "<piece_params>")]
-    pub fn create_pieces(id: i32, piece_params: Json<PieceParams>) -> JsonValue {
+    pub fn create_piece(id: i32, piece_params: Json<PieceParams>) -> JsonValue {
         let new_piece = PieceParams {
             ..piece_params.into_inner()
         };
         json!(Piece::create(id, new_piece))
+    }
+
+    #[put("/<_id>/pieces/<piece_id>", format = "json", data = "<piece>")]
+    pub fn update_piece(_id: i32, piece_id: i32, piece: Json<PieceParams>) -> JsonValue {
+        let updated_piece = PieceParams {
+            ..piece.into_inner()
+        };
+        json!(Piece::update(piece_id, updated_piece))
     }
 }
 

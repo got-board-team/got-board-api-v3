@@ -86,7 +86,7 @@ pub struct Piece {
     pub spec: Option<serde_json::Value>,
 }
 
-#[derive(Serialize, Deserialize, Insertable)]
+#[derive(Serialize, Deserialize, Insertable, AsChangeset)]
 #[table_name = "pieces"]
 pub struct PieceParams {
     pub piece_type: String,
@@ -248,5 +248,14 @@ impl Piece {
             .values((&piece_attr, pieces::columns::match_id.eq(&match_id)))
             .get_result::<Piece>(&connection)
             .expect("Error saving piece to match")
+    }
+
+    pub fn update(piece_id: i32, piece: PieceParams) -> bool {
+        let connection = db::establish_connection();
+
+        diesel::update(pieces::table.find(&piece_id))
+            .set(&piece)
+            .execute(&connection)
+            .is_ok()
     }
 }
