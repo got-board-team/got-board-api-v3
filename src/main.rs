@@ -11,6 +11,7 @@ extern crate chrono;
 extern crate dotenv;
 extern crate pusher;
 extern crate rustc_serialize;
+extern crate serde_json;
 
 pub mod db;
 pub mod models;
@@ -33,6 +34,7 @@ fn main() {
                 routes::matches::update,
                 routes::matches::delete,
                 routes::matches::join,
+                routes::matches::create_pieces,
             ],
         )
         .mount(
