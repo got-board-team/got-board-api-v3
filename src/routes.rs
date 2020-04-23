@@ -41,6 +41,11 @@ pub mod matches {
         ))
     }
 
+    #[get("/<id>/pieces")]
+    pub fn match_pieces(id: i32) -> JsonValue {
+        json!(Piece::all(id))
+    }
+
     #[post("/<id>/pieces", format = "json", data = "<piece_params>")]
     pub fn create_piece(id: i32, piece_params: Json<PieceParams>) -> JsonValue {
         let new_piece = PieceParams {

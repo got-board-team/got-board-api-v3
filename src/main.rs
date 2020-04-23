@@ -34,6 +34,7 @@ fn main() {
                 routes::matches::update,
                 routes::matches::delete,
                 routes::matches::join,
+                routes::matches::match_pieces,
                 routes::matches::create_piece,
                 routes::matches::update_piece,
                 routes::matches::delete_piece,

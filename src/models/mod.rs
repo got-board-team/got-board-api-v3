@@ -241,6 +241,15 @@ impl User {
 }
 
 impl Piece {
+    pub fn all(match_id: i32) -> Vec<Piece> {
+        let connection = db::establish_connection();
+
+        pieces::table
+            .filter(pieces::match_id.eq(match_id))
+            .load(&connection)
+            .expect("Cound not load pieces")
+    }
+
     pub fn create(match_id: i32, piece_attr: PieceParams) -> Piece {
         let connection = db::establish_connection();
 
