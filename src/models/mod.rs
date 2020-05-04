@@ -259,13 +259,13 @@ impl Piece {
             .expect("Error saving piece to match")
     }
 
-    pub fn update(piece_id: i32, piece: PieceParams) -> bool {
+    pub fn update(piece_id: i32, piece: PieceParams) -> Piece {
         let connection = db::establish_connection();
 
         diesel::update(pieces::table.find(&piece_id))
             .set(&piece)
-            .execute(&connection)
-            .is_ok()
+            .get_result::<Piece>(&connection)
+            .expect("Could not update piece")
     }
 
     pub fn delete(id: i32) -> bool {
