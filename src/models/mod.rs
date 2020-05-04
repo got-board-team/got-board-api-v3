@@ -68,9 +68,11 @@ pub struct MatchWithUsers {
     pub players: Vec<MatchesUsers>,
 }
 
-#[derive(Serialize, Deserialize, RustcEncodable)]
+#[derive(Serialize, Deserialize)]
 pub struct Message {
-    pub name: String,
+    pub r#type: String,
+    pub author: i32,
+    pub drop: Piece,
 }
 
 #[derive(Queryable, Identifiable, Serialize, Deserialize, Insertable)]
