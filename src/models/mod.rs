@@ -1,10 +1,11 @@
 use crate::db;
-use crate::schema::{matches, matches_users, users};
+use crate::schema::{matches, matches_users, pieces, users};
 use diesel::prelude::*;
 use serde::{Deserialize, Serialize};
 // https://stackoverflow.com/questions/38676229/timestamp-in-rusts-diesel-library-with-postgres
 use chrono::NaiveDateTime;
 use itertools::Itertools;
+use serde_json;
 
 #[derive(Insertable, Deserialize, AsChangeset)]
 #[table_name = "users"]
@@ -72,6 +73,30 @@ pub struct Message {
     pub name: String,
 }
 
+#[derive(Queryable, Identifiable, Serialize, Deserialize, Insertable)]
+#[table_name = "pieces"]
+pub struct Piece {
+    pub id: i32,
+    pub match_id: i32,
+    pub piece_type: String,
+    pub x: i32,
+    pub y: i32,
+    pub location: String,
+    pub house_name: Option<String>,
+    pub spec: Option<serde_json::Value>,
+}
+
+#[derive(Serialize, Deserialize, Insertable, AsChangeset)]
+#[table_name = "pieces"]
+pub struct PieceParams {
+    pub piece_type: String,
+    pub x: i32,
+    pub y: i32,
+    pub location: String,
+    pub house_name: Option<String>,
+    pub spec: Option<serde_json::Value>,
+}
+
 impl Match {
     pub fn get(id: i32) -> MatchWithUsers {
         let connection = db::establish_connection();
@@ -128,6 +153,7 @@ impl Match {
     pub fn join(match_id: i32, user_id: i32, house_name: String) -> MatchesUsers {
         let connection = db::establish_connection();
 
+        // Add business rule to restrict join to players_count cap and 1 player per house
         diesel::insert_into(matches_users::table)
             .values((
                 matches_users::columns::match_id.eq(&match_id),
@@ -209,6 +235,43 @@ impl User {
         let connection = db::establish_connection();
 
         diesel::delete(users::table.find(id))
+            .execute(&connection)
+            .is_ok()
+    }
+}
+
+impl Piece {
+    pub fn all(match_id: i32) -> Vec<Piece> {
+        let connection = db::establish_connection();
+
+        pieces::table
+            .filter(pieces::match_id.eq(match_id))
+            .load(&connection)
+            .expect("Cound not load pieces")
+    }
+
+    pub fn create(match_id: i32, piece_attr: PieceParams) -> Piece {
+        let connection = db::establish_connection();
+
+        diesel::insert_into(pieces::table)
+            .values((&piece_attr, pieces::columns::match_id.eq(&match_id)))
+            .get_result::<Piece>(&connection)
+            .expect("Error saving piece to match")
+    }
+
+    pub fn update(piece_id: i32, piece: PieceParams) -> Piece {
+        let connection = db::establish_connection();
+
+        diesel::update(pieces::table.find(&piece_id))
+            .set(&piece)
+            .get_result::<Piece>(&connection)
+            .expect("Could not update piece")
+    }
+
+    pub fn delete(id: i32) -> bool {
+        let connection = db::establish_connection();
+
+        diesel::delete(pieces::table.find(id))
             .execute(&connection)
             .is_ok()
     }

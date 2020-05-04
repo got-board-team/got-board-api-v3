@@ -19,6 +19,19 @@ table! {
 }
 
 table! {
+    pieces (id) {
+        id -> Int4,
+        match_id -> Int4,
+        piece_type -> Varchar,
+        x -> Int4,
+        y -> Int4,
+        location -> Varchar,
+        house_name -> Nullable<Varchar>,
+        spec -> Nullable<Jsonb>,
+    }
+}
+
+table! {
     users (id) {
         id -> Int4,
         email -> Varchar,
@@ -31,5 +44,6 @@ table! {
 allow_tables_to_appear_in_same_query!(
     matches,
     matches_users,
+    pieces,
     users,
 );
