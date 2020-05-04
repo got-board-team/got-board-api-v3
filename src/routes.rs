@@ -107,8 +107,9 @@ pub mod users {
 pub mod websocket {
     use crate::models::Message;
     use dotenv::dotenv;
-    use pusher::Pusher;
+    use pusher::PusherBuilder;
     use rocket_contrib::json::{Json, JsonValue};
+    use tokio::runtime::Runtime;
 
     #[post("/messages", format = "json", data = "<message>")]
     pub fn pusher_message(message: Json<Message>) -> JsonValue {
@@ -116,11 +117,15 @@ pub mod websocket {
         let api_id = dotenv::var("PUSHER_API_ID").expect("API_ID is not loaded");
         let key = dotenv::var("PUSHER_KEY").expect("Pusher KEY not set");
         let app_secret = dotenv::var("PUSHER_APP_SECRET").expect("Pusher APP_SECRET not set");
-        let mut pusher = Pusher::new(&api_id, &key, &app_secret).finalize();
+        let mut pusher = PusherBuilder::new(&api_id, &key, &app_secret).finalize();
         let msg = Message {
             ..message.into_inner()
         };
-        match pusher.trigger("game", "update", &msg) {
+        let push_payload = Runtime::new()
+            .expect("Failed to create Tokio runtime")
+            .block_on(pusher.trigger("game", "update", &msg));
+
+        match push_payload {
             Ok(_) => json!({ "success": &msg }),
             Err(error) => json!({ "error": error }),
         }

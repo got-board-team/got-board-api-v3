@@ -9,6 +9,7 @@ extern crate rocket_cors;
 extern crate diesel;
 extern crate chrono;
 extern crate dotenv;
+extern crate futures; // `pusher` is async, so we need to block on the future in this example
 extern crate pusher;
 extern crate rustc_serialize;
 extern crate serde_json;
