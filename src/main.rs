@@ -46,6 +46,7 @@ fn main() {
             routes![
                 routes::users::all,
                 routes::users::get,
+                routes::users::filter,
                 routes::users::create,
                 routes::users::update,
                 routes::users::delete,
