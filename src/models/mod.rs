@@ -8,6 +8,8 @@ use itertools::Itertools;
 use rocket::request::Form;
 use serde_json;
 
+mod services;
+
 #[derive(Insertable, Deserialize, AsChangeset)]
 #[table_name = "users"]
 pub struct UserAttr {
@@ -149,14 +151,18 @@ impl Match {
     pub fn create(mat: MatchAttr) -> Match {
         let connection = db::establish_connection();
 
-        diesel::insert_into(matches::table)
+        let created_match = diesel::insert_into(matches::table)
             .values((
                 &mat,
                 matches::columns::created_at.eq(diesel::dsl::now),
                 matches::columns::updated_at.eq(diesel::dsl::now),
             ))
             .get_result::<Match>(&connection)
-            .expect("Error saving new match")
+            .expect("Error saving new match");
+
+        services::matches::setup(created_match.id, mat.players_count);
+
+        created_match
     }
 
     pub fn join(match_id: i32, user_id: i32, house_name: String) -> MatchesUsers {
