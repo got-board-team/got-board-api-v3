@@ -69,7 +69,8 @@ pub mod matches {
 }
 
 pub mod users {
-    use crate::models::{User, UserAttr};
+    use crate::models::{SearchableUserAttr, User, UserAttr};
+    use rocket::request::Form;
     use rocket_contrib::json::{Json, JsonValue};
 
     #[get("/")]
@@ -80,6 +81,12 @@ pub mod users {
     #[get("/<id>")]
     pub fn get(id: i32) -> JsonValue {
         json!(User::get(id))
+    }
+
+    // TODO: Implement 404
+    #[get("/filter?<user..>")]
+    pub fn filter(user: Form<SearchableUserAttr>) -> JsonValue {
+        json!(User::filter(user))
     }
 
     #[post("/", format = "json", data = "<user>")]

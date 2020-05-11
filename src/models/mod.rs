@@ -5,6 +5,7 @@ use serde::{Deserialize, Serialize};
 // https://stackoverflow.com/questions/38676229/timestamp-in-rusts-diesel-library-with-postgres
 use chrono::NaiveDateTime;
 use itertools::Itertools;
+use rocket::request::Form;
 use serde_json;
 
 #[derive(Insertable, Deserialize, AsChangeset)]
@@ -22,6 +23,12 @@ pub struct User {
     pub name: String,
     pub created_at: NaiveDateTime,
     pub updated_at: NaiveDateTime,
+}
+
+#[derive(FromForm)]
+pub struct SearchableUserAttr {
+    pub email: String,
+    // TODO: Implement all attributes as optional
 }
 
 #[derive(Insertable, Deserialize, AsChangeset)]
@@ -207,6 +214,16 @@ impl User {
 
         users::table
             .find(id)
+            .first(&connection)
+            .expect("Could not load user")
+    }
+
+    pub fn filter(user: Form<SearchableUserAttr>) -> User {
+        let connection = db::establish_connection();
+
+        users::table
+            .into_boxed()
+            .filter(users::email.eq(&user.email))
             .first(&connection)
             .expect("Could not load user")
     }
