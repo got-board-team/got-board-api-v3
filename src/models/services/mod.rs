@@ -37,9 +37,21 @@ pub mod matches {
         create_piece(match_id, String::from("knight"), 1392, 1797, String::from("map"), Some(String::from("baratheon")));
         create_piece(match_id, String::from("footman"), 1295, 1804, String::from("map"), Some(String::from("baratheon")));
         create_piece(match_id, String::from("footman"), 1098, 2000, String::from("map"), Some(String::from("baratheon")));
-        create_piece(match_id, String::from("influence_token"), 0, 0, String::from("war_room"), Some(String::from("baratheon")));
-        create_piece(match_id, String::from("influence_token"), 0, 0, String::from("war_room"), Some(String::from("baratheon")));
-        create_piece(match_id, String::from("influence_token"), 0, 0, String::from("war_room"), Some(String::from("baratheon")));
+        for _ in 0..8 {
+            create_piece(match_id, String::from("footman"), 0, 0, String::from("war_room"), Some(String::from("baratheon")));
+        }
+        for _ in 0..4 {
+            create_piece(match_id, String::from("knight"), 0, 0, String::from("war_room"), Some(String::from("baratheon")));
+        }
+        for _ in 0..4 {
+            create_piece(match_id, String::from("ship"), 0, 0, String::from("war_room"), Some(String::from("baratheon")));
+        }
+        for _ in 0..2 {
+            create_piece(match_id, String::from("siege"), 0, 0, String::from("war_room"), Some(String::from("baratheon")));
+        }
+        for _ in 0..3 {
+            create_piece(match_id, String::from("influence_token"), 0, 0, String::from("war_room"), Some(String::from("baratheon")));
+        }
         create_piece(match_id, String::from("supply_token"), 1643, 1633, String::from("map"), Some(String::from("baratheon")));
         create_piece(match_id, String::from("victory_token"), 1811, 2823, String::from("map"), Some(String::from("baratheon")));
 
@@ -47,19 +59,43 @@ pub mod matches {
         create_piece(match_id, String::from("knight"), 625, 851, String::from("map"), Some(String::from("stark")));
         create_piece(match_id, String::from("footman"), 773, 544, String::from("map"), Some(String::from("stark")));
         create_piece(match_id, String::from("footman"), 852, 810, String::from("map"), Some(String::from("stark")));
-        create_piece(match_id, String::from("influence_token"), 0, 0, String::from("war_room"), Some(String::from("stark")));
-        create_piece(match_id, String::from("influence_token"), 0, 0, String::from("war_room"), Some(String::from("stark")));
-        create_piece(match_id, String::from("influence_token"), 0, 0, String::from("war_room"), Some(String::from("stark")));
+        for _ in 0..8 {
+            create_piece(match_id, String::from("footman"), 0, 0, String::from("war_room"), Some(String::from("stark")));
+        }
+        for _ in 0..4 {
+            create_piece(match_id, String::from("knight"), 0, 0, String::from("war_room"), Some(String::from("stark")));
+        }
+        for _ in 0..5 {
+            create_piece(match_id, String::from("ship"), 0, 0, String::from("war_room"), Some(String::from("stark")));
+        }
+        for _ in 0..2 {
+            create_piece(match_id, String::from("siege"), 0, 0, String::from("war_room"), Some(String::from("stark")));
+        }
+        for _ in 0..3 {
+            create_piece(match_id, String::from("influence_token"), 0, 0, String::from("war_room"), Some(String::from("stark")));
+        }
         create_piece(match_id, String::from("supply_token"), 1640, 1731, String::from("map"), Some(String::from("stark")));
         create_piece(match_id, String::from("victory_token"), 1807, 2694, String::from("map"), Some(String::from("stark")));
 
+        create_piece(match_id, String::from("ship"), 133, 1759, String::from("map"), Some(String::from("lannister")));
         create_piece(match_id, String::from("knight"), 328, 1826, String::from("map"), Some(String::from("lannister")));
         create_piece(match_id, String::from("footman"), 348, 1690, String::from("map"), Some(String::from("lannister")));
-        create_piece(match_id, String::from("ship"), 133, 1759, String::from("map"), Some(String::from("lannister")));
         create_piece(match_id, String::from("footman"), 476, 1820, String::from("map"), Some(String::from("lannister")));
-        create_piece(match_id, String::from("influence_token"), 0, 0, String::from("war_room"), Some(String::from("lannister")));
-        create_piece(match_id, String::from("influence_token"), 0, 0, String::from("war_room"), Some(String::from("lannister")));
-        create_piece(match_id, String::from("influence_token"), 0, 0, String::from("war_room"), Some(String::from("lannister")));
+        for _ in 0..8 {
+            create_piece(match_id, String::from("footman"), 0, 0, String::from("war_room"), Some(String::from("lannister")));
+        }
+        for _ in 0..4 {
+            create_piece(match_id, String::from("knight"), 0, 0, String::from("war_room"), Some(String::from("lannister")));
+        }
+        for _ in 0..5 {
+            create_piece(match_id, String::from("ship"), 0, 0, String::from("war_room"), Some(String::from("lannister")));
+        }
+        for _ in 0..2 {
+            create_piece(match_id, String::from("siege"), 0, 0, String::from("war_room"), Some(String::from("lannister")));
+        }
+        for _ in 0..3 {
+            create_piece(match_id, String::from("influence_token"), 0, 0, String::from("war_room"), Some(String::from("lannister")));
+        }
         create_piece(match_id, String::from("supply_token"), 1643, 1633, String::from("map"), Some(String::from("lannister")));
         create_piece(match_id, String::from("victory_token"), 1811, 2823, String::from("map"), Some(String::from("lannister")));
     }
@@ -71,9 +107,21 @@ pub mod matches {
         create_piece(match_id, String::from("knight"), 1010, 2600, String::from("map"), Some(String::from("martell")));
         create_piece(match_id, String::from("footman"), 1107, 2611, String::from("map"), Some(String::from("martell")));
         create_piece(match_id, String::from("footman"), 814, 2698, String::from("map"), Some(String::from("martell")));
-        create_piece(match_id, String::from("influence_token"), 0, 0, String::from("war_room"), Some(String::from("martell")));
-        create_piece(match_id, String::from("influence_token"), 0, 0, String::from("war_room"), Some(String::from("martell")));
-        create_piece(match_id, String::from("influence_token"), 0, 0, String::from("war_room"), Some(String::from("martell")));
+        for _ in 0..8 {
+            create_piece(match_id, String::from("footman"), 0, 0, String::from("war_room"), Some(String::from("martell")));
+        }
+        for _ in 0..4 {
+            create_piece(match_id, String::from("knight"), 0, 0, String::from("war_room"), Some(String::from("martell")));
+        }
+        for _ in 0..5 {
+            create_piece(match_id, String::from("ship"), 0, 0, String::from("war_room"), Some(String::from("martell")));
+        }
+        for _ in 0..2 {
+            create_piece(match_id, String::from("siege"), 0, 0, String::from("war_room"), Some(String::from("martell")));
+        }
+        for _ in 0..3 {
+            create_piece(match_id, String::from("influence_token"), 0, 0, String::from("war_room"), Some(String::from("martell")));
+        }
         create_piece(match_id, String::from("supply_token"), 1643, 1633, String::from("map"), Some(String::from("martell")));
         create_piece(match_id, String::from("victory_token"), 1811, 2823, String::from("map"), Some(String::from("martell")));
     }
@@ -86,9 +134,21 @@ pub mod matches {
         create_piece(match_id, String::from("knight"), 198, 1472, String::from("map"), Some(String::from("greyjoy")));
         create_piece(match_id, String::from("footman"), 281, 1479, String::from("map"), Some(String::from("greyjoy")));
         create_piece(match_id, String::from("footman"), 458, 1164, String::from("map"), Some(String::from("greyjoy")));
-        create_piece(match_id, String::from("influence_token"), 0, 0, String::from("war_room"), Some(String::from("greyjoy")));
-        create_piece(match_id, String::from("influence_token"), 0, 0, String::from("war_room"), Some(String::from("greyjoy")));
-        create_piece(match_id, String::from("influence_token"), 0, 0, String::from("war_room"), Some(String::from("greyjoy")));
+        for _ in 0..8 {
+            create_piece(match_id, String::from("footman"), 0, 0, String::from("war_room"), Some(String::from("greyjoy")));
+        }
+        for _ in 0..4 {
+            create_piece(match_id, String::from("knight"), 0, 0, String::from("war_room"), Some(String::from("greyjoy")));
+        }
+        for _ in 0..4 {
+            create_piece(match_id, String::from("ship"), 0, 0, String::from("war_room"), Some(String::from("greyjoy")));
+        }
+        for _ in 0..2 {
+            create_piece(match_id, String::from("siege"), 0, 0, String::from("war_room"), Some(String::from("greyjoy")));
+        }
+        for _ in 0..3 {
+            create_piece(match_id, String::from("influence_token"), 0, 0, String::from("war_room"), Some(String::from("greyjoy")));
+        }
         create_piece(match_id, String::from("supply_token"), 1643, 1633, String::from("map"), Some(String::from("greyjoy")));
         create_piece(match_id, String::from("victory_token"), 1811, 2823, String::from("map"), Some(String::from("greyjoy")));
     }
@@ -100,9 +160,21 @@ pub mod matches {
         create_piece(match_id, String::from("knight"), 389, 2171, String::from("map"), Some(String::from("tyrell")));
         create_piece(match_id, String::from("footman"), 406, 2262, String::from("map"), Some(String::from("tyrell")));
         create_piece(match_id, String::from("footman"), 498, 2308, String::from("map"), Some(String::from("tyrell")));
-        create_piece(match_id, String::from("influence_token"), 0, 0, String::from("war_room"), Some(String::from("tyrell")));
-        create_piece(match_id, String::from("influence_token"), 0, 0, String::from("war_room"), Some(String::from("tyrell")));
-        create_piece(match_id, String::from("influence_token"), 0, 0, String::from("war_room"), Some(String::from("tyrell")));
+        for _ in 0..8 {
+            create_piece(match_id, String::from("footman"), 0, 0, String::from("war_room"), Some(String::from("tyrell")));
+        }
+        for _ in 0..4 {
+            create_piece(match_id, String::from("knight"), 0, 0, String::from("war_room"), Some(String::from("tyrell")));
+        }
+        for _ in 0..5 {
+            create_piece(match_id, String::from("ship"), 0, 0, String::from("war_room"), Some(String::from("tyrell")));
+        }
+        for _ in 0..2 {
+            create_piece(match_id, String::from("siege"), 0, 0, String::from("war_room"), Some(String::from("tyrell")));
+        }
+        for _ in 0..3 {
+            create_piece(match_id, String::from("influence_token"), 0, 0, String::from("war_room"), Some(String::from("tyrell")));
+        }
         create_piece(match_id, String::from("supply_token"), 1643, 1633, String::from("map"), Some(String::from("tyrell")));
         create_piece(match_id, String::from("victory_token"), 1811, 2823, String::from("map"), Some(String::from("tyrell")));
     }
